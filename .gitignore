@@ -16,3 +16,12 @@ xcuserdata
 # svn & cvs
 .svn
 CVS
+
+# vim noise
+*.swp
+
+# intermediate build steps
+autogen.xml
+
+# genned output files
+draft-*
