@@ -349,6 +349,10 @@ an RPC Reply's Payload stream.
 Position Zero Read chunks are always sent
 using an RPC-over-RDMA RDMA_NOMSG message.
 </t>
+<t>
+In other words, a responder-provided Read chunk
+may replace the use of a Reply chunk in Long Replies.
+</t>
 
 <section title="Responder Duties">
 
@@ -445,9 +449,11 @@ when using RDMA Send With Invalidate.
 <section title="Analysis">
 
 <section title="Benefits">
+
+<section title="Less Use of Explicit RDMA">
+
 <t>
-Outside of situations where krb5i or krb5p are in use,
-the vast majority of RPC Replies can be conveyed via RDMA_MSG.
+The vast majority of RPC Replies can be conveyed via RDMA_MSG.
 No extra Reply chunk registration and invalidation cost is incurred
 when a large RPC Reply message is possible but the actual reply
 size is small.
@@ -456,13 +462,23 @@ of explicit RDMA for frequent small-to-moderate-size replies,
 improving the average latency of individual RPCs and
 allowing RNIC and platform resources to scale better.
 </t>
+
+</section>
+
+<section title="Support for Arbitrarily Large Replies">
+
 <t>
 The responder-provided Read chunk approach accommodates
 arbitrarily large replies.
 Requesters no longer need to calculate the maximum size
 of RPC Reply messages,
-except on occasions when a Reply chunk is preferred.
+even if a Reply chunk is provided.
 </t>
+
+</section>
+
+<section title="Protection of Connection After RPC Cancellation">
+
 <t>
 When an RPC is canceled on the requester
 (say, because the requesting application has been terminated),
@@ -475,6 +491,11 @@ to transmit the RPC Reply message.
 The transport connection is preserved because
 no memory protection violation can occur.
 </t>
+
+</section>
+
+<section title="Asynchronous Chunk Invalidation">
+
 <t>
 Registration of a responder-provided Read chunk must be
 completed before sending the RDMA_NOMSG message conveying the
@@ -490,17 +511,24 @@ execution time of the RPC transaction.
 
 </section>
 
+</section>
+
 <section title="Costs">
+
+<section title="Responder Memory Exposure">
 
 <t>
 Responder memory is registered and exposed to requesters when replying.
-However, outside of krb5i and krb5p usage, the new mechanism is rarely
-used and thus does not significantly increase responder memory exposure.
 When a responder has properly allocated a Protection Domain for
 each transport and uses appropriate R_key rotation techniques
 (see <xref target="sec:security-considerations"/>),
 the exposure is minimal.
 </t>
+
+</section>
+
+<section title="Round Trip Penalty">
+
 <t>
 Using a Read chunk for large replies introduces a round-trip penalty.
 A requester can provide a Reply chunk to avoid this penalty.
@@ -528,16 +556,40 @@ round-trip time
 </list>
 </t>
 <t>
-Credit accounting is made marginally more complex
+There are a few particular situations
+where the frequency of large replies is high.
+For example, the use of the krb5i or krb5p GSS services
+with RPC-over-RDMA require that reduction is not used.
+Thus, RPC-over-RDMA peers use only pure RDMA Sends or Long messages
+when these services are in use.
+The actual size of a READDIR reply is often unpredictable but
+is frequently large.
+In these two cases,
+using a Reply chunk could be the most efficient default choice.
+</t>
+
+</section>
+
+<section title="Credit Accounting Complexity">
+
+<t>
+Credit accounting is made more complex
 by the use of RDMA_DONE messages after RDMA Read
 operations have completed.
 Sending an RDMA_DONE message consumes one credit,
 temporarily reducing RPC concurrency on the connection.
+There is no response to RDMA_DONE,
+so it is not clear to the sender
+when that credit becomes available again.
+</t>
+<t>
 If the transport protocol supports
 piggybacking pull completion notification on RPC Call messages,
 the requester can use this mechanism in most cases
 to simplify credit accounting.
 </t>
+
+</section>
 
 </section>
 
