@@ -174,7 +174,7 @@ and the RPC transaction is terminated on the requester.
 </t>
 <t>
 In either case, the RPC is executed by the responder,
-but the responder does not receive the results or
+but the requester does not receive the results or
 acknowledgement of its completion.
 </t>
 
@@ -385,7 +385,7 @@ After the read operation has completed (successfully or in error),
 the requester MUST inform the responder that it may invalidate
 the Read chunk containing the RPC Reply message.
 This is referred to as "pull completion notification".
-The responder can send an RDMA_DONE message
+The requester can send an RDMA_DONE message
 with the rdma_xid field set to the same value
 as the rdma_xid field in the RDMA_NOMSG request.
 </t>
