@@ -64,7 +64,7 @@ document are to be interpreted as described in <xref target="RFC2119"/>.
  anchor="sec:introduction">
 
 <t>
-One way in which RPC transports such as RPC-over-RDMA Version One
+One way in which RPC-over-RDMA Version One
 improve transport efficiency is by ensuring resources for RPC replies
 are available in advance <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
 These resources are typically provisioned
@@ -73,7 +73,8 @@ They are provided to the responder to use for transmiting
 the associated RPC Reply message back to the requester.
 </t>
 <t>
-In particular, when an RPC Reply message is expected to be large,
+In particular, when the Payload Stream of an RPC Reply message
+is expected to be large,
 the requester allocates and registers a Reply chunk.
 The responder transfers the RPC Reply message's Payload stream
 directly into the requester memory associated with that chunk,
@@ -91,7 +92,7 @@ However, on rare occasions an Upper Layer Protocol
 might not be able to derive a reply size upper bound.
 An example of this is the NFS version 4.2 READ_PLUS operation
 <xref target="RFC7862"/> <xref target="I-D.ietf-nfsv4-rfc5667bis"/>,
-where a reply can contain an unpredictable mix of
+where a reply can contain an unpredictable number of
 data content and hole descriptors.
 </t>
 <t>
@@ -123,7 +124,7 @@ familiar with <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
 
 </section>
 
-<section title="Background">
+<section title="Problem Statement">
 
 <t>
 RPC-over-RDMA Version One uses an RDMA Send request to transmit
@@ -138,7 +139,9 @@ a peer from emitting more Send operations
 than the receiver is prepared for.
 </t>
 <t>
-The smallest buffer in this pool determines the largest
+Because the selection of Receive Work Request to handle
+an incoming Send is outside the control of the host O/S,
+the smallest buffer in this pool determines the largest
 size message that can be received.
 The size of the largest message that can be received via RDMA Send
 is known as the receiver's "inline threshold"
@@ -385,6 +388,8 @@ This is referred to as "pull completion notification".
 The responder can send an RDMA_DONE message
 with the rdma_xid field set to the same value
 as the rdma_xid field in the RDMA_NOMSG request.
+</t>
+<t>
 Or, the requester can piggyback the pull completion notification
 in the transport header of a subsequent RPC Call,
 if the transport protocol has such a facility.
@@ -408,12 +413,19 @@ it MUST inform the responder of pull completion and
 terminate the RPC transaction.
 </t>
 <t>
-A requester could exhaust a responder's per-connection resources
-by never sending pull completion notification
-after receiving responder-provided Read chunks.
-A responder recovers by silently dropping the connection
-and invalidating all memory registered
-for responder-provided Read chunks on that connection.
+Whenever a responder receives a pull completion notification
+for an XID for which there is no Read chunk waiting to be invalidated,
+the responder MUST silently drop the notification.
+</t>
+<t>
+A malicious or broken requester might neglect to send
+pull completion notifications for one or more RPC transactions
+that included responder-provided Read chunks.
+To prevent exhaustion of responder resources,
+a responder can choose to invalidate its Read chunks after
+waiting for a short period.
+If the requester attempts additional RDMA Read operations against
+that Read chunk, a remote access error occurs and the connection is lost.
 </t>
 
 </section>
@@ -424,6 +436,13 @@ for responder-provided Read chunks on that connection.
 Remote Invalidation can reduce or eliminate the need
 for the responder to explicitly invalidate memory
 containing an RPC Reply message.
+</t>
+<t>
+Remote Invalidation might be done by transmitting an RDMA_DONE message
+using RDMA Send With Invalidate.
+If instead pull completion notification is piggybacked on a subsequent
+RPC Call, a facility for Remote Invalidation would have to be built
+into RPC Call processing.
 </t>
 <t>
 If Remote Invalidate support is not indicated by one or both peers,
@@ -450,7 +469,7 @@ when using RDMA Send With Invalidate.
 
 <section title="Benefits">
 
-<section title="Less Use of Explicit RDMA">
+<section title="Less Frequent Use of Explicit RDMA">
 
 <t>
 The vast majority of RPC Replies can be conveyed via RDMA_MSG.
@@ -520,9 +539,12 @@ execution time of the RPC transaction.
 <t>
 Responder memory is registered and exposed to requesters when replying.
 When a responder has properly allocated a Protection Domain for
-each transport and uses appropriate R_key rotation techniques
+each connection and uses appropriate R_key rotation techniques
 (see <xref target="sec:security-considerations"/>),
 the exposure is minimal.
+However, because current RPC-over-RDMA responder implementations
+do not expose memory to requesters,
+they typically share one Protection Domain among all connections.
 </t>
 
 </section>
@@ -532,7 +554,7 @@ the exposure is minimal.
 <t>
 Using a Read chunk for large replies introduces a round-trip penalty.
 A requester can provide a Reply chunk to avoid this penalty.
-However, consider that:
+However:
 <list style="symbols">
 <t>
 The Read chunk round-trip penalty would be paid much less often than
@@ -550,7 +572,7 @@ may take as long as a round trip to the responder
 </t>
 <t>
 Read chunks are typically used for large payloads,
-where it is likely that data transmission time exceeds the
+where it is likely that data transmission time greatly exceeds the
 round-trip time
 </t>
 </list>
@@ -559,13 +581,13 @@ round-trip time
 There are a few particular situations
 where the frequency of large replies is high.
 For example, the use of the krb5i or krb5p GSS services
-with RPC-over-RDMA require that reduction is not used.
+with RPC-over-RDMA require that Payload reduction is not used.
 Thus, RPC-over-RDMA peers use only pure RDMA Sends or Long messages
 when these services are in use.
 The actual size of a READDIR reply is often unpredictable but
 is frequently large.
 In these two cases,
-using a Reply chunk could be the most efficient default choice.
+using a Reply chunk could be the more efficient default choice.
 </t>
 
 </section>
@@ -581,12 +603,19 @@ temporarily reducing RPC concurrency on the connection.
 There is no response to RDMA_DONE,
 so it is not clear to the sender
 when that credit becomes available again.
+One way to resolve this is to add a new message type to
+the protocol, RDMA_ACK, which could be used any time
+there is a uni-directional transport message to maintain
+the proper balance of credit grants and responses.
 </t>
 <t>
-If the transport protocol supports
+Alternately, if the transport protocol supports
 piggybacking pull completion notification on RPC Call messages,
-the requester can use this mechanism in most cases
+the requester can piggyback in most cases
 to simplify credit accounting.
+An explicit RDMA_DONE would be necessary only during light workloads,
+or the ULP could post an RPC NULL containing
+a piggybacked pull completion notification in these cases.
 </t>
 
 </section>
@@ -709,6 +738,40 @@ Once complete, the requester posts an RDMA_DONE message.
 
 </section>
 
+<section title="Managing RDMA_DONE messages">
+
+<t>
+In order for a responder to match incoming RDMA_DONE messages
+to reply buffers waiting to be invalidated,
+it might keep references to these buffers in a data structure searchable by XID.
+This is similar to managing a set of pending backchannel replies.
+</t>
+<t>
+When an RDMA_DONE message arrives,
+the responder matches the XID in the message to a waiting reply buffer,
+invalidates that buffer, and removes the XID from the data structure.
+</t>
+<t>
+This data structure can also be used for housekeeping tasks such as:
+<list style="symbols">
+<t>
+Invalidating waiting buffers after a timeout,
+in case the requester never sends RDMA_DONE
+</t>
+<t>
+Ignoring retransmitted or garbage RDMA_DONE requests
+</t>
+<t>
+Explicitly invalidating waiting Read chunks after a connection loss, if necessary
+</t>
+<t>
+Invalidating waiting buffers on device removal
+</t>
+</list>
+</t>
+
+</section>
+
 </section>
 
 <section title="Alternatives">
@@ -744,6 +807,32 @@ of the RPC Call and Reply hot path on the requester.
 </t>
 
 </section>
+
+</section>
+
+<section title="Interoperation Considerations">
+
+<t>
+When a requester supports responder-provided Read chunks,
+it is likely to neglect providing Reply chunks in some cases.
+A responder that does not support responder-provided Read chunks
+can convey a transport-level error when it has generated an
+RPC Reply that is larger than the available reply resources.
+</t>
+<t>
+The situation is more problematic if a responder supports
+responder-provided Read chunks and sends them to a requester
+that is not able to recognize and unmarshal them.
+The RPC transaction would never complete, and the requester
+would never send a pull completion notification.
+</t>
+<t>
+Thus responder-provided Read chunks MUST be used only when
+both peers support them:
+Either the base protocol version always has support enabled,
+or the base protocol provides an extension mechanism that
+indicates when support is available.
+</t>
 
 </section>
 
@@ -787,7 +876,7 @@ of the transport protocol that employs it.
  anchor="sec:iana-considerations">
 
 <t>
-There are no IANA Considerations.
+This document does not require actions by IANA.
 </t>
 
 </section>
@@ -798,7 +887,7 @@ There are no IANA Considerations.
 
 <references title="Normative References">
 
-<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5666bis-10.xml"?>
+<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5666bis-11.xml"?>
 <?rfc include="references/reference.RFC.2119.xml"?>
 
 </references>
@@ -806,7 +895,7 @@ There are no IANA Considerations.
 <references title="Informative References">
 
 <?rfc include="references/reference.I-D.draft-dnoveck-nfsv4-rpcrdma-rtrext-01.xml"?>
-<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5667bis-06.xml"?>
+<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5667bis-08.xml"?>
 <?rfc include="references/reference.RFC.5661.xml"?>
 <?rfc include="references/reference.RFC.5666.xml"?>
 <?rfc include="references/reference.RFC.7862.xml"?>
@@ -816,7 +905,12 @@ There are no IANA Considerations.
 <section title="Acknowledgments">
 
 <t>
-The author wishes to thank
+Many thanks go to
+Karen Dietke,
+Chunli Zhang,
+Dai Ngo, and
+Tom Talpey.
+The author also wishes to thank
 Bill Baker and Greg Marsden for their support of this work.
 </t>
 <t>
