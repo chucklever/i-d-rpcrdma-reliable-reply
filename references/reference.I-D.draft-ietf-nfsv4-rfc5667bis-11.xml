@@ -8,13 +8,13 @@
     <organization />
 </author>
 
-<date month='April' day='4' year='2017' />
+<date month='May' day='9' year='2017' />
 
 <abstract><t>This document specifies Upper Layer Bindings of Network File System (NFS) protocol versions to RPC-over-RDMA Version One, enabling the use of Direct Data Placement.  This document obsoletes RFC 5667.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-nfsv4-rfc5667bis-08' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-nfsv4-rfc5667bis-11' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-nfsv4-rfc5667bis-08.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-nfsv4-rfc5667bis-11.txt' />
 </reference>
