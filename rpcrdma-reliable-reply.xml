@@ -33,11 +33,12 @@ Improving the Performance and Reliability of RPC Replies on RPC-over-RDMA Transp
 <t>
 RPC transports such as RPC-over-RDMA Version One
 require reply buffers to be in place before an RPC Call is sent.
-However, Upper Layer Protocols can have difficulty estimating
-the expected maximum size of RPC replies in some cases.
+However, Upper Layer Protocols sometimes have difficulty
+estimating the expected maximum size of RPC replies.
 This introduces the risk that an RPC Reply message
-can overrun available reply resources,
-preventing delivery of the message.
+can overrun reply resources provided by the requester,
+preventing delivery of the message, through no fault
+of the requester.
 This document describes a mechanism that eliminates
 the need for pre-allocation of reply resources for
 unpredictably large replies.
@@ -65,8 +66,9 @@ document are to be interpreted as described in <xref target="RFC2119"/>.
 
 <t>
 One way in which RPC-over-RDMA Version One
-improve transport efficiency is by ensuring resources for RPC replies
-are available in advance <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+improves transport efficiency is by ensuring resources for RPC replies
+are available in advance of each RPC transaction
+<xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
 These resources are typically provisioned
 before a requester sends each RPC Call message.
 They are provided to the responder to use for transmiting
@@ -90,8 +92,8 @@ making the risk of Reply chunk overrun exceptionally small.
 <t>
 However, on rare occasions an Upper Layer Protocol
 might not be able to derive a reply size upper bound.
-An example of this is the NFS version 4.2 READ_PLUS operation
-<xref target="RFC7862"/> <xref target="I-D.ietf-nfsv4-rfc5667bis"/>,
+An example of this is the NFS version 4.1 GETATTR operation
+<xref target="RFC5661"/> <xref target="I-D.ietf-nfsv4-rfc5667bis"/>,
 where a reply can contain an unpredictable number of
 data content and hole descriptors.
 </t>
@@ -100,8 +102,9 @@ Further, since the average size of actual RPC Replies is small,
 requesters frequently allocate and register a Reply chunk
 for a reply that, once it has been constructed by the responder,
 is small enough to be sent inline.
-A responder is free to either populate the Reply chunk or
-send the reply inline in this case.
+In this case,
+a responder is free to either populate the Reply chunk or
+send the RPC Reply without the use of the Reply chunk.
 The requester's cost of preparing the Reply chunk has been wasted,
 and the extra registration and invalidation adds unwanted latency
 to the operation.
@@ -116,8 +119,8 @@ are necessary to make this guarantee.
 </t>
 <t>
 This document resurrects the responder-provided Read chunk
-capability outlined in <xref target="RFC5666"/> to achieve
-these goals.
+mechanism that was briefly outlined in <xref target="RFC5666"/>
+to achieve these goals.
 The discussion in this document assumes the reader is
 familiar with <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
 </t>
@@ -149,10 +152,10 @@ is known as the receiver's "inline threshold"
 </t>
 <t>
 When marshaling an RPC transaction, a requester allocates and registers
-a Reply chunk whenever the maximum possible size of an RPC Reply
-is larger than the requester's receive inline threshold.
-The Reply chunk is passed to the responder as part of the RPC Call.
-The responder places the associated RPC Reply message
+a Reply chunk whenever the maximum possible size of the corresponding
+RPC-over-RDMA reply is larger than the requester's receive inline threshold.
+The Reply chunk is presented to the responder as part of the RPC Call.
+The responder may place the associated RPC Reply message
 in the memory region linked with this Reply chunk.
 </t>
 
@@ -168,9 +171,10 @@ and retransmitting it may result in additional connection loss events.
 </t>
 <t>
 A smart responder compares the size of an RPC Reply with the size
-of a Reply chunk before initiating the placement of data in that chunk.
+of the target Reply chunk before initiating the placement of data
+in that chunk.
 A generic RDMA_ERROR message reports the problem
-and the RPC transaction is terminated on the requester.
+and the requester can terminate the RPC transaction.
 </t>
 <t>
 In either case, the RPC is executed by the responder,
@@ -203,7 +207,8 @@ There is no protocol-specified limit on the size of NFS ACLs.
 When retrieving an NFS ACL, there is always a risk, albeit a small one,
 that the NFS client has not provided a large enough Reply chunk,
 and that therefore the NFS server will not be able to return
-that ACL to the client.
+that ACL to the client
+(unless somehow a larger Reply chunk can be provided).
 </t>
 
 </section>
@@ -388,7 +393,9 @@ using an RPC-over-RDMA RDMA_NOMSG message.
 </t>
 <t>
 In other words, a responder-provided Read chunk
-may replace the use of a Reply chunk in Long Replies.
+can replace the use of a Reply chunk in Long Replies.
+And, as with Reply chunks, a responder must still make use
+of Write chunks provided by the requester.
 </t>
 
 <section title="Responder Duties">
@@ -415,41 +422,48 @@ Upon receipt of an RDMA_NOMSG message containing a Position Zero Read chunk,
 the requester pulls the RPC Reply's Payload stream from the responder.
 </t>
 <t>
-After the read operation has completed (successfully or in error),
+After RDMA Read operations have completed (successfully or in error),
 the requester MUST inform the responder that it may invalidate
 the Read chunk containing the RPC Reply message.
 This is referred to as "pull completion notification".
-The requester can send an RDMA_DONE message
-with the rdma_xid field set to the same value
-as the rdma_xid field in the RDMA_NOMSG request.
-</t>
-<t>
-Or, the requester can piggyback the pull completion notification
-in the transport header of a subsequent RPC Call,
-if the transport protocol has such a facility.
 </t>
 
 </section>
 
-<section title="Error Handling">
+<section title="Pull Completion Notification">
 
+<t>
+Pull completion notification is accomplished in one of two ways:
+<list style="symbols">
+<t>
+The requester can send an RDMA_DONE message
+with the rdma_xid field set to the same value
+as the rdma_xid field in the RDMA_NOMSG request. Or,
+</t>
+<t>
+The requester can piggyback the pull completion notification
+in the transport header of a subsequent RPC Call,
+if the transport protocol has such a facility.
+</t>
+</list>
+</t>
 <t>
 When an RPC transaction is aborted on a requester,
 the requester normally forgets its XID.
 If a requester receives a reply
 bearing a Position Zero Read chunk and does not recognize the XID,
-the requester MUST inform the responder of pull completion.
+the requester MUST notify the responder of pull completion.
+</t>
+<t>
+Whenever a responder receives a pull completion notification
+for an XID for which there is no Read chunk waiting to be invalidated,
+the responder MUST silently drop the notification.
 </t>
 <t>
 If a requester receives an RPC Reply via a responder-provided Read chunk,
 but does not support such chunks,
 it MUST inform the responder of pull completion and
 terminate the RPC transaction.
-</t>
-<t>
-Whenever a responder receives a pull completion notification
-for an XID for which there is no Read chunk waiting to be invalidated,
-the responder MUST silently drop the notification.
 </t>
 <t>
 A malicious or broken requester might neglect to send
@@ -666,7 +680,7 @@ This section illustrates some possible implementation choices.
 
 <t>
 As an RPC Call is constructed,
-a requester might choose to prepare a reply mechanism
+a requester might choose a reply mechanism
 based on its estimation of the range of possible sizes of the reply.
 <list style="hanging">
 <t hangText="Responder-provided Read chunk">
@@ -675,7 +689,8 @@ The requester knows the minimum size of the reply
 is smaller than the inline threshold, but
 the maximum size of the reply is larger than the inline threshold;
 or the requester cannot calculate the maximum size of the reply.
-The client does not provide a Reply chunk.
+The client does not provide a Reply chunk,
+and relies on a responder-provider Read chunk to handle large replies.
 </t>
 <t hangText="Reply chunk">
 <vspace/>
@@ -687,7 +702,8 @@ The requester provides a Reply chunk.
 <vspace/>
 The requester knows the maximum size of the reply
 is smaller than the inline threshold.
-The requester does not provide a Reply chunk.
+The requester does not provide a Reply chunk,
+and relies on a responder-provider Read chunk to handle large replies.
 </t>
 </list>
 </t>
@@ -724,7 +740,8 @@ the responder uses the Reply chunk.
 <vspace/>
 If no Reply chunk is available and
 the Payload stream fits within the inline threshold,
-the responder uses only Send or Send With Invalidate.
+the responder uses only Send or Send With Invalidate
+to transmit the reply.
 </t>
 </list>
 </t>
@@ -900,7 +917,7 @@ to convey the Payload stream of an RPC Reply message.
 </t>
 <t>
 Otherwise, this mechanism does not alter the attack surface
-of the transport protocol that employs it.
+of a transport protocol that employs it.
 </t>
 
 </section>
