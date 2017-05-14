@@ -286,6 +286,40 @@ Repeated connection loss can result in a Denial of Service.
 
 </section>
 
+<section title="Estimating Transport Header Size">
+
+<t>
+To determine whether a Reply chunk is needed,
+a requester computes the size of the Reply's Transport
+Header and the maximum possible size of the RPC Reply message,
+and sums the two.
+If the sum is smaller than the requester's receive
+inline threshold, a Reply chunk is not required.
+</t>
+<t>
+The size of a Transport Header depends on how many
+Write chunks the requester provides, whether a Reply chunk is
+needed, and how many segments are contained in provided
+Write and Reply chunks.
+</t>
+<t>
+When the total size of the Reply message
+is already near the inline threshold, therefore,
+a requester has to know whether a Reply chunk is needed
+(and how many segments it contains)
+before it can determine if a Reply chunk is needed.
+</t>
+<t>
+A requester can resort to limiting Transport Header
+size to a fixed value that ensures this computation does not
+become a recursion.
+However, as in earlier sections, this can mean that
+some RPC transactions where a Reply chunk is not strictly
+necessary must incur the cost of preparing a Reply chunk.
+</t>
+
+</section>
+
 </section>
 
 <section title="Responder-Provided Read Chunks">
