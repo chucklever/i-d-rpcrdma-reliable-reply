@@ -1,26 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!-- Copyright (C) The IETF Trust (2016) -->
-
-<author
-  initials="C.L."
-  surname="Lever"
-  fullname="Charles Lever">
-
+<?xml version="1.0" encoding="US-ASCII"?>
+<author initials="C.L." surname="Lever" fullname="Charles Lever">
   <organization abbrev="Oracle">
     Oracle Corporation
   </organization>
-
   <address>
     <postal>
       <street>1015 Granger Avenue</street>
       <city>Ann Arbor</city>
       <region>MI</region>
       <code>48104</code>
-      <country>USA</country>
+      <country>United States of America</country>
     </postal>
     <phone>+1 248 816 6463</phone>
     <email>chuck.lever@oracle.com</email>
   </address>
-
 </author>

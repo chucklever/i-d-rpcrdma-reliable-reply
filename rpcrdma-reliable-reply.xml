@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="US-ASCII"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [ ]>
-
 <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
 <?rfc strict="yes" ?>
 <?rfc toc="yes"?>
@@ -46,16 +45,6 @@ unpredictably large replies.
 
 </abstract>
 
-<note title="Requirements Language">
-
-<t>
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in <xref target="RFC2119"/>.
-</t>
-
-</note>
-
 </front>
 
 <middle>
@@ -68,7 +57,7 @@ document are to be interpreted as described in <xref target="RFC2119"/>.
 One way in which RPC-over-RDMA Version One
 improves transport efficiency is by ensuring resources for RPC replies
 are available in advance of each RPC transaction
-<xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+<xref target="RFC8166"/>.
 These resources are typically provisioned
 before a requester sends each RPC Call message.
 They are provided to the responder to use for transmiting
@@ -122,7 +111,19 @@ This document resurrects the responder-provided Read chunk
 mechanism that was briefly outlined in <xref target="RFC5666"/>
 to achieve these goals.
 The discussion in this document assumes the reader is
-familiar with <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+familiar with <xref target="RFC8166"/>.
+</t>
+
+</section>
+
+<section title="Requirements Language">
+
+<t>
+The key words "MUST", "MUST NOT", "REQUIRED",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14
+<xref target="RFC2119"/> <xref target="RFC8174"/>
+when, and only when, they appear in all capitals, as shown here.
 </t>
 
 </section>
@@ -148,7 +149,7 @@ the smallest buffer in this pool determines the largest
 size message that can be received.
 The size of the largest message that can be received via RDMA Send
 is known as the receiver's "inline threshold"
-<xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+<xref target="RFC8166"/>.
 </t>
 <t>
 When marshaling an RPC transaction, a requester allocates and registers
@@ -249,7 +250,7 @@ the size of an actual RPC reply is small.
 <t>
 Before an RPC transaction is terminated,
 a requester is responsible for fencing the Reply chunk
-from the responder <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+from the responder <xref target="RFC8166"/>.
 That makes RPC completion synchronous with Reply chunk invalidation.
 Therefore the latency of Reply chunk invalidation adds to the total 
 execution time of the RPC transaction.
@@ -264,7 +265,7 @@ When an RPC transaction is canceled or aborted
 (for instance, because an application process exited prematurely),
 a requester must invalidate or set aside Write and Reply
 chunks associated with that transaction
-<xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+<xref target="RFC8166"/>.
 </t>
 <t>
 This is because that RPC transaction is still running on the responder.
@@ -382,7 +383,7 @@ A responder MAY choose to send an RPC Reply
 using a Position Zero Read chunk
 comprised of one or more RDMA segments.
 Position Zero Read chunks are defined in
-Section 3.5.3 of <xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+Section 3.5.3 of <xref target="RFC8166"/>.
 </t>
 <t>
 Similar to its use in an RPC Call,
@@ -911,7 +912,7 @@ completely blocks payload access by unintended recipients.
 Recommendations about adequate R_key rotation
 and the appropriate use of Protection Domains can be found in
 Section 8.1 of
-<xref target="I-D.ietf-nfsv4-rfc5666bis"/>.
+<xref target="RFC8166"/>.
 These recommendations apply when responders expose memory
 to convey the Payload stream of an RPC Reply message.
 </t>
@@ -938,8 +939,9 @@ This document does not require actions by IANA.
 
 <references title="Normative References">
 
-<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5666bis-11.xml"?>
 <?rfc include="references/reference.RFC.2119.xml"?>
+<?rfc include="references/reference.RFC.8166.xml"?>
+<?rfc include="references/reference.RFC.8174.xml"?>
 
 </references>
 
@@ -953,7 +955,7 @@ This document does not require actions by IANA.
 
 </references>
 
-<section title="Acknowledgments">
+<section title="Acknowledgments" numbered="no">
 
 <t>
 Many thanks go to
@@ -967,9 +969,9 @@ Bill Baker and Greg Marsden for their support of this work.
 <t>
 Special thanks go to
 Transport Area Director Spencer Dawkins,
-nfsv4 Working Group Chair Spencer Shepler,
+NFSV4 Working Group Chair Spencer Shepler,
 and
-nfsv4 Working Group Secretary Thomas Haynes
+NFSV4 Working Group Secretary Thomas Haynes
 for their support.
 </t>
 
