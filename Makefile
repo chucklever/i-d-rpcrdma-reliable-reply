@@ -13,7 +13,7 @@ IDNITS := ../../idnits-2.14.01/idnits
 AUTHOR := cel
 GROUP := nfsv4
 NAME := rpcrdma-reliable-reply
-VERSION := 01
+VERSION := 02
 DOCNAME := draft-$(AUTHOR)-$(GROUP)-$(NAME)-$(VERSION)
 
 # Source

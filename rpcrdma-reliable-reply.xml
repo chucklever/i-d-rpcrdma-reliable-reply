@@ -82,7 +82,7 @@ making the risk of Reply chunk overrun exceptionally small.
 However, on rare occasions an Upper Layer Protocol
 might not be able to derive a reply size upper bound.
 An example of this is the NFS version 4.1 GETATTR operation
-<xref target="RFC5661"/> <xref target="I-D.ietf-nfsv4-rfc5667bis"/>,
+<xref target="RFC5661"/> <xref target="RFC8267"/>
 where a reply can contain an unpredictable number of
 data content and hole descriptors.
 </t>
@@ -192,7 +192,7 @@ To determine when a Reply chunk is needed,
 requesters calculate the maximum possible size
 of the RPC Reply message expected for each transaction.
 Upper Layer Bindings,
-such as <xref target="I-D.ietf-nfsv4-rfc5667bis"/>,
+such as <xref target="RFC8267"/>
 provide guidance on how to calculate Reply sizes and
 in what cases the Upper Layer Protocol might have difficulty
 giving an exact upper bound.
@@ -947,11 +947,11 @@ This document does not require actions by IANA.
 
 <references title="Informative References">
 
-<?rfc include="references/reference.I-D.draft-dnoveck-nfsv4-rpcrdma-rtrext-01.xml"?>
-<?rfc include="references/reference.I-D.draft-ietf-nfsv4-rfc5667bis-11.xml"?>
+<?rfc include="references/reference.I-D.draft-dnoveck-nfsv4-rpcrdma-rtrext-03.xml"?>
 <?rfc include="references/reference.RFC.5661.xml"?>
 <?rfc include="references/reference.RFC.5666.xml"?>
 <?rfc include="references/reference.RFC.7862.xml"?>
+<?rfc include="references/reference.RFC.8267.xml"?>
 
 </references>
 
