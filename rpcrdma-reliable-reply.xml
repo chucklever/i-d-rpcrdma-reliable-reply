@@ -30,10 +30,10 @@ Improving the Performance and Reliability of RPC Replies on RPC-over-RDMA Transp
 <abstract>
 
 <t>
-RPC transports such as RPC-over-RDMA Version One
+RPC transports such as RPC-over-RDMA version 1
 require reply buffers to be in place before an RPC Call is sent.
-However, Upper Layer Protocols sometimes have difficulty
-estimating the expected maximum size of RPC replies.
+However, RPC consumers sometimes have difficulty
+estimating the expected maximum size of a particular RPC reply.
 This introduces the risk that an RPC Reply message
 can overrun reply resources provided by the requester,
 preventing delivery of the message, through no fault
@@ -54,7 +54,7 @@ unpredictably large replies.
  anchor="sec:introduction">
 
 <t>
-One way in which RPC-over-RDMA Version One
+One way in which RPC-over-RDMA version 1
 improves transport efficiency is by ensuring resources for RPC replies
 are available in advance of each RPC transaction
 <xref target="RFC8166"/>.
@@ -131,7 +131,7 @@ when, and only when, they appear in all capitals, as shown here.
 <section title="Problem Statement">
 
 <t>
-RPC-over-RDMA Version One uses an RDMA Send request to transmit
+RPC-over-RDMA version 1 uses an RDMA Send request to transmit
 transport headers and small RPC messages.
 </t>
 <t>
@@ -252,7 +252,7 @@ Before an RPC transaction is terminated,
 a requester is responsible for fencing the Reply chunk
 from the responder <xref target="RFC8166"/>.
 That makes RPC completion synchronous with Reply chunk invalidation.
-Therefore the latency of Reply chunk invalidation adds to the total 
+Therefore the latency of Reply chunk invalidation adds to the total
 execution time of the RPC transaction.
 </t>
 
@@ -368,9 +368,9 @@ This results in no wasted activity on the requester
 and arbitrarily large RPC Replies can be received reliably.
 </t>
 <t>
-Current RPC-over-RDMA Version One implementations
+Current RPC-over-RDMA version 1 implementations
 do not support responder-provided Read chunks,
-although RPC-over-RDMA Version One
+although RPC-over-RDMA version 1
 did have this support in the past <xref target="RFC5666"/>.
 Adapting this deprecated mechanism
 for new RPC-over-RDMA transports is straightforward.
@@ -709,7 +709,7 @@ and relies on a responder-provider Read chunk to handle large replies.
 </list>
 </t>
 <t>
-A requester whose design requires Reply chunk invalidation  
+A requester whose design requires Reply chunk invalidation
 after an RPC transaction is canceled might choose to never
 use Reply chunks, in favor of minimizing opportunities
 for connection loss.
