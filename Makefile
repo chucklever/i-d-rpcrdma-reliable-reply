@@ -9,12 +9,12 @@ RM := rm -f
 XML2RFC := xml2rfc -v
 IDNITS := ../../idnits-2.14.01/idnits
 
-# docName
-AUTHOR := cel
+# full document name
+AUTHOR := $(shell cat authors/initials)
 GROUP := nfsv4
-NAME := rpcrdma-reliable-reply
-VERSION := 02
-DOCNAME := draft-$(AUTHOR)-$(GROUP)-$(NAME)-$(VERSION)
+NAME := $(shell basename $(PWD))
+REVISION := $(shell cat revision)
+DOCNAME := draft-$(AUTHOR)-$(GROUP)-$(NAME)-$(REVISION)
 
 # Source
 SOURCE := $(NAME).xml
@@ -28,7 +28,7 @@ XML := $(DOCNAME).xml
 
 all: $(TXT) $(PS) $(PDF) $(HTML) $(XML)
 
-autogen.xml: $(SOURCE) references/reference.*.xml authors/author*.xml
+autogen.xml: $(SOURCE) references/reference.*.xml authors/author*.xml authors/initials revision
 	sed -e s/DOCNAMEVAR/$(DOCNAME)/g < $(SOURCE) > $@
 
 $(XML): autogen.xml
