@@ -841,8 +841,8 @@ and does not require the exposure of requester or responder memory
 <xref target="I-D.dnoveck-nfsv4-rpcrdma-rtrext"/>.
 </t>
 <t>
-However, Message Continuation does limit the maximum size
-of a conveyed message.
+However, Message Continuation still limits
+the maximum size of a conveyed message.
 As with a larger inline threshold,
 without responder-provided Read chunks,
 reply size estimation is still required to determine
