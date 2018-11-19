@@ -19,7 +19,21 @@
 Improving the Performance and Reliability of RPC Replies on RPC-over-RDMA Transports
 </title>
 
-<?rfc include="authors/author-lever-chuck.xml"?>
+<author initials="C.L." surname="Lever" fullname="Charles Lever">
+<organization abbrev="Oracle">
+Oracle Corporation
+</organization>
+<address>
+<postal>
+<street>1015 Granger Avenue</street>
+<city>Ann Arbor</city>
+<region>MI</region>
+<code>48104</code>
+<country>United States of America</country>
+</postal>
+<email>chuck.lever@oracle.com</email>
+</address>
+</author>
 
 <date />
 

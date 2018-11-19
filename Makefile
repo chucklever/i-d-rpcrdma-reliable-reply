@@ -10,7 +10,7 @@ XML2RFC := xml2rfc -v
 IDNITS := ../../idnits-2.14.01/idnits
 
 # full document name
-AUTHOR := $(shell cat authors/initials)
+AUTHOR := $(shell cat initials)
 GROUP := nfsv4
 NAME := $(shell basename $(PWD))
 REVISION := $(shell cat revision)
@@ -28,7 +28,7 @@ XML := $(DOCNAME).xml
 
 all: $(TXT) $(PS) $(PDF) $(HTML) $(XML)
 
-autogen.xml: $(SOURCE) references/reference.*.xml authors/author*.xml authors/initials revision
+autogen.xml: $(SOURCE) references/reference.*.xml initials revision
 	sed -e s/DOCNAMEVAR/$(DOCNAME)/g < $(SOURCE) > $@
 
 $(XML): autogen.xml
