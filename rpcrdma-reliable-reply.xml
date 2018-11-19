@@ -852,7 +852,6 @@ with unpredictably large replies.
 Message Continuation
 is more efficient than an explicit RDMA operation,
 and does not require the exposure of requester or responder memory
-<xref target="I-D.dnoveck-nfsv4-rpcrdma-rtrext"/>.
 </t>
 <t>
 However, Message Continuation still limits
@@ -953,19 +952,18 @@ This document does not require actions by IANA.
 
 <references title="Normative References">
 
-<?rfc include="references/reference.RFC.2119.xml"?>
-<?rfc include="references/reference.RFC.8166.xml"?>
-<?rfc include="references/reference.RFC.8174.xml"?>
+<?rfc include="reference.RFC.2119.xml"?>
+<?rfc include="reference.RFC.8166.xml"?>
+<?rfc include="reference.RFC.8174.xml"?>
 
 </references>
 
 <references title="Informative References">
 
-<?rfc include="references/reference.I-D.draft-dnoveck-nfsv4-rpcrdma-rtrext-03.xml"?>
-<?rfc include="references/reference.RFC.5661.xml"?>
-<?rfc include="references/reference.RFC.5666.xml"?>
-<?rfc include="references/reference.RFC.7862.xml"?>
-<?rfc include="references/reference.RFC.8267.xml"?>
+<?rfc include="reference.RFC.5661.xml"?>
+<?rfc include="reference.RFC.5666.xml"?>
+<?rfc include="reference.RFC.7862.xml"?>
+<?rfc include="reference.RFC.8267.xml"?>
 
 </references>
 
