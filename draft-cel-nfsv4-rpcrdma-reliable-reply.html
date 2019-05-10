@@ -1,0 +1,785 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Improving the Performance and Reliability of RPC Replies on RPC-over-RDMA Transports </title>
+
+  
+<style type="text/css">/*<![CDATA[*/
+
+body {
+  font: 16px "Helvetica Neue","Open Sans",Helvetica,Calibri,sans-serif;
+  color: #333;
+  font-size-adjust: 0.5;
+  line-height: 24px;
+  margin: 75px auto;
+  max-width: 624px;
+  padding: 0 5px;
+}
+
+.title, .filename, h1, h2, h3, h4, h5 {
+  font: 16px "Roboto Condensed","Helvetica Neue","Open Sans",Helvetica,Calibri,sans-serif;
+  font-size-adjust: 0.5;
+  font-weight: bold;
+  color: #333;
+  line-height: 100%;
+  margin: 1.2em 0 0.3em;
+}
+.title, #rfc\.title h1 { font-size: 32px; }
+h1, section h1, h2, section h2, section h3, nav h2 { font-size: 20px; }
+h3, section h4, h4, section h5 { font-size: 16px; }
+h1 a[href], h2 a[href], h3 a[href], h4 a[href] {
+  color: #333;
+}
+
+table {
+  margin-left: 0em;
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+  vertical-align: top;
+}
+tr:nth-child(2n+1) > td,
+tr:nth-child(2n+1) > th {
+  background-color: #f9f9f9;
+}
+td.reference {
+  max-width: 200px;
+  border-top: none;
+  padding-right: 1em;
+}
+.right {
+  text-align: right;
+}
+
+
+table.header, table#rfc\.headerblock {
+  width: 100%;
+}
+table.header td, table#rfc\.headerblock td {
+  border: none;
+  background-color: transparent;
+  color: black;
+  padding: 0;
+}
+.filename {
+  display: block;
+  color: rgb(119, 119, 119);
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 100%;
+  margin: 10px 0 32px;
+}
+#rfc\.abstract+p, #rfc\.abstract+p code, #rfc\.abstract+p samp, #rfc\.abstract+p tt {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+samp, tt, code, pre, span.tt {
+  font-size: 13.5px;
+  font-family: Consolas, monospace;
+  font-size-adjust: none;
+}
+pre {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+  padding: 5px;
+  margin: 5px;
+}
+.figure, caption {
+  font-style: italic;
+  margin: 0 1.5em;
+  text-align: left;
+}
+
+address {
+  margin: 16px 2px;
+  line-height: 20px;
+}
+.vcard {
+  font-style: normal;
+}
+.vcardline {
+  display: block;
+}
+.vcardline .fn, address b {
+  font-weight: normal;
+}
+.vcardline .hidden {
+  display: none;
+}
+
+dl {
+  margin-left: 1em;
+}
+dl.dl-horizontal: {
+  margin-left: 0;
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.nohang > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .5em;
+}
+dl.compact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+ul.empty {
+  list-style-type: none;
+}
+ul.empty li {
+  margin-top: .5em;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+hr.noprint {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #2a6496;
+}
+a[href]:hover {
+  background-color: #eee;
+}
+
+p, ol, ul, li {
+  padding: 0;
+}
+p {
+  margin: 0.5em 0;
+}
+ol, ul {
+  margin: 0.2em 0 0.2em 2em;
+}
+li {
+  margin: 0.2em 0;
+}
+address {
+  font-style: normal;
+}
+
+ul.toc ul {
+  margin: 0 0 0 2em;
+}
+ul.toc li {
+  list-style: none;
+  margin: 0;
+}
+
+@media screen and (min-width: 924px) {
+  body {
+    padding-right: 350px;
+  }
+  body>ul.toc, body>#rfc\.toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 500px);
+    width: 300px;
+    z-index: 1;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  body>#rfc\.toc {
+    top: 55px;
+  }
+  body>ul.toc {
+    top: 100px;
+  }
+
+  ul.toc {
+    margin: 0 0 0 4px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  ul.toc ul {
+    margin-left: 1.2em;
+  }
+}
+
+.github-fork-ribbon-wrapper {
+  display: none;
+}
+@media screen and (min-width: 800px) {
+  /* "Fork me on GitHub" CSS ribbon based on
+   * https://github.com/simonwhitaker/github-fork-ribbon-css
+   */
+  .github-fork-ribbon {
+    position: absolute;
+    padding: 2px 0;
+    background-color: #a00;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+    font: 700 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    pointer-events: auto;
+
+    top: 38px;
+    right: -45px;
+
+    transform: rotate(45deg);
+  }
+
+  .github-fork-ribbon a[href],
+  .github-fork-ribbon a[href]:hover {
+    color: #fff;
+    background-color: transparent;
+    text-decoration: none;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+    text-align: center;
+
+    width: 190px;
+    line-height: 18px;
+
+    display: inline-block;
+    padding: 2px 0;
+
+    border: 1.5px dotted #fff;
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .github-fork-ribbon-wrapper {
+    display: block;
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    overflow: hidden;
+    top: 0; right: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+}
+@media screen and (min-width: 1000px) {
+  .github-fork-ribbon-wrapper {
+    position: fixed;
+  }
+  /*]]>*/</style>
+  <meta name="viewport" content="initial-scale=1.0">
+
+
+  <link href="#rfc.toc" rel="Contents">
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="#rfc.section.2" rel="Chapter" title="2 Requirements Language">
+<link href="#rfc.section.3" rel="Chapter" title="3 Problem Statement">
+<link href="#rfc.section.3.1" rel="Chapter" title="3.1 Reply Chunk Overrun">
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Reply Size Calculation">
+<link href="#rfc.section.3.3" rel="Chapter" title="3.3 Requester Registration Costs">
+<link href="#rfc.section.3.4" rel="Chapter" title="3.4 Denial of Service">
+<link href="#rfc.section.3.5" rel="Chapter" title="3.5 Estimating Transport Header Size">
+<link href="#rfc.section.4" rel="Chapter" title="4 Responder-Provided Read Chunks">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Specification">
+<link href="#rfc.section.4.1.1" rel="Chapter" title="4.1.1 Responder Duties">
+<link href="#rfc.section.4.1.2" rel="Chapter" title="4.1.2 Requester Duties">
+<link href="#rfc.section.4.1.3" rel="Chapter" title="4.1.3 Pull Completion Notification">
+<link href="#rfc.section.4.1.4" rel="Chapter" title="4.1.4 Remote Invalidation">
+<link href="#rfc.section.5" rel="Chapter" title="5 Analysis">
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Benefits">
+<link href="#rfc.section.5.1.1" rel="Chapter" title="5.1.1 Less Frequent Use of Explicit RDMA">
+<link href="#rfc.section.5.1.2" rel="Chapter" title="5.1.2 Support for Arbitrarily Large Replies">
+<link href="#rfc.section.5.1.3" rel="Chapter" title="5.1.3 Protection of Connection After RPC Cancellation">
+<link href="#rfc.section.5.1.4" rel="Chapter" title="5.1.4 Asynchronous Chunk Invalidation">
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Costs">
+<link href="#rfc.section.5.2.1" rel="Chapter" title="5.2.1 Responder Memory Exposure">
+<link href="#rfc.section.5.2.2" rel="Chapter" title="5.2.2 Round Trip Penalty">
+<link href="#rfc.section.5.2.3" rel="Chapter" title="5.2.3 Credit Accounting Complexity">
+<link href="#rfc.section.5.3" rel="Chapter" title="5.3 Selecting a Reply Mechanism">
+<link href="#rfc.section.5.3.1" rel="Chapter" title="5.3.1 Requester">
+<link href="#rfc.section.5.3.2" rel="Chapter" title="5.3.2 Responder">
+<link href="#rfc.section.5.4" rel="Chapter" title="5.4 Implementation Complexity">
+<link href="#rfc.section.5.4.1" rel="Chapter" title="5.4.1 RPC Call Path">
+<link href="#rfc.section.5.4.2" rel="Chapter" title="5.4.2 RPC Reply Path">
+<link href="#rfc.section.5.4.3" rel="Chapter" title="5.4.3 Managing RDMA_DONE messages">
+<link href="#rfc.section.5.5" rel="Chapter" title="5.5 Alternatives">
+<link href="#rfc.section.6" rel="Chapter" title="6 Interoperation Considerations">
+<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
+<link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations">
+<link href="#rfc.references" rel="Chapter" title="9 References">
+<link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References">
+<link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References">
+<link href="#rfc.acknowledgments" rel="Chapter">
+<link href="#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.22.2 - https://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Lever, C." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-cel-nfsv4-rpcrdma-reliable-reply-latest" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-10" />
+  <meta name="dct.abstract" content="RPC transports such as RPC-over-RDMA version 1 require reply buffers to be in place before an RPC Call is sent.  However, RPC consumers sometimes have difficulty estimating the expected maximum size of a particular RPC reply.  This introduces the risk that an RPC Reply message can overrun reply resources provided by the requester, preventing delivery of the message, through no fault of the requester.  This document describes a mechanism that eliminates the need for pre-allocation of reply resources for unpredictably large replies.  " />
+  <meta name="description" content="RPC transports such as RPC-over-RDMA version 1 require reply buffers to be in place before an RPC Call is sent.  However, RPC consumers sometimes have difficulty estimating the expected maximum size of a particular RPC reply.  This introduces the risk that an RPC Reply message can overrun reply resources provided by the requester, preventing delivery of the message, through no fault of the requester.  This document describes a mechanism that eliminates the need for pre-allocation of reply resources for unpredictably large replies.  " />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+<td class="left">Network File System Version 4</td>
+<td class="right">C. Lever</td>
+</tr>
+<tr>
+<td class="left">Internet-Draft</td>
+<td class="right">Oracle</td>
+</tr>
+<tr>
+<td class="left">Intended status: Experimental</td>
+<td class="right">May 10, 2019</td>
+</tr>
+<tr>
+<td class="left">Expires: November 11, 2019</td>
+<td class="right"></td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Improving the Performance and Reliability of RPC Replies on RPC-over-RDMA Transports <br />
+  <span class="filename">draft-cel-nfsv4-rpcrdma-reliable-reply-latest</span></p>
+  
+  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
+<p>RPC transports such as RPC-over-RDMA version 1 require reply buffers to be in place before an RPC Call is sent.  However, RPC consumers sometimes have difficulty estimating the expected maximum size of a particular RPC reply.  This introduces the risk that an RPC Reply message can overrun reply resources provided by the requester, preventing delivery of the message, through no fault of the requester.  This document describes a mechanism that eliminates the need for pre-allocation of reply resources for unpredictably large replies.  </p>
+<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on November 11, 2019.</p>
+<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
+<p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<li>2.   <a href="#rfc.section.2">Requirements Language</a>
+</li>
+<li>3.   <a href="#rfc.section.3">Problem Statement</a>
+</li>
+<ul><li>3.1.   <a href="#rfc.section.3.1">Reply Chunk Overrun</a>
+</li>
+<li>3.2.   <a href="#rfc.section.3.2">Reply Size Calculation</a>
+</li>
+<li>3.3.   <a href="#rfc.section.3.3">Requester Registration Costs</a>
+</li>
+<li>3.4.   <a href="#rfc.section.3.4">Denial of Service</a>
+</li>
+<li>3.5.   <a href="#rfc.section.3.5">Estimating Transport Header Size</a>
+</li>
+</ul><li>4.   <a href="#rfc.section.4">Responder-Provided Read Chunks</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Specification</a>
+</li>
+<ul><li>4.1.1.   <a href="#rfc.section.4.1.1">Responder Duties</a>
+</li>
+<li>4.1.2.   <a href="#rfc.section.4.1.2">Requester Duties</a>
+</li>
+<li>4.1.3.   <a href="#rfc.section.4.1.3">Pull Completion Notification</a>
+</li>
+<li>4.1.4.   <a href="#rfc.section.4.1.4">Remote Invalidation</a>
+</li>
+</ul></ul><li>5.   <a href="#rfc.section.5">Analysis</a>
+</li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Benefits</a>
+</li>
+<ul><li>5.1.1.   <a href="#rfc.section.5.1.1">Less Frequent Use of Explicit RDMA</a>
+</li>
+<li>5.1.2.   <a href="#rfc.section.5.1.2">Support for Arbitrarily Large Replies</a>
+</li>
+<li>5.1.3.   <a href="#rfc.section.5.1.3">Protection of Connection After RPC Cancellation</a>
+</li>
+<li>5.1.4.   <a href="#rfc.section.5.1.4">Asynchronous Chunk Invalidation</a>
+</li>
+</ul><li>5.2.   <a href="#rfc.section.5.2">Costs</a>
+</li>
+<ul><li>5.2.1.   <a href="#rfc.section.5.2.1">Responder Memory Exposure</a>
+</li>
+<li>5.2.2.   <a href="#rfc.section.5.2.2">Round Trip Penalty</a>
+</li>
+<li>5.2.3.   <a href="#rfc.section.5.2.3">Credit Accounting Complexity</a>
+</li>
+</ul><li>5.3.   <a href="#rfc.section.5.3">Selecting a Reply Mechanism</a>
+</li>
+<ul><li>5.3.1.   <a href="#rfc.section.5.3.1">Requester</a>
+</li>
+<li>5.3.2.   <a href="#rfc.section.5.3.2">Responder</a>
+</li>
+</ul><li>5.4.   <a href="#rfc.section.5.4">Implementation Complexity</a>
+</li>
+<ul><li>5.4.1.   <a href="#rfc.section.5.4.1">RPC Call Path</a>
+</li>
+<li>5.4.2.   <a href="#rfc.section.5.4.2">RPC Reply Path</a>
+</li>
+<li>5.4.3.   <a href="#rfc.section.5.4.3">Managing RDMA_DONE messages</a>
+</li>
+</ul><li>5.5.   <a href="#rfc.section.5.5">Alternatives</a>
+</li>
+</ul><li>6.   <a href="#rfc.section.6">Interoperation Considerations</a>
+</li>
+<li>7.   <a href="#rfc.section.7">Security Considerations</a>
+</li>
+<li>8.   <a href="#rfc.section.8">IANA Considerations</a>
+</li>
+<li>9.   <a href="#rfc.references">References</a>
+</li>
+<ul><li>9.1.   <a href="#rfc.references.1">Normative References</a>
+</li>
+<li>9.2.   <a href="#rfc.references.2">Informative References</a>
+</li>
+</ul><li><a href="#rfc.acknowledgments">Acknowledgments</a>
+</li>
+<li><a href="#rfc.authors">Author's Address</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
+<a href="#rfc.section.1">1.</a> <a href="#section:1189e579-9c8a-44c6-934a-07a340686295" id="section:1189e579-9c8a-44c6-934a-07a340686295">Introduction</a>
+</h1>
+<p id="rfc.section.1.p.1">One way in which RPC-over-RDMA version 1 improves transport efficiency is by ensuring resources for RPC replies are available in advance of each RPC transaction <a href="#RFC8166" class="xref">[RFC8166]</a>.  These resources are typically provisioned before a requester sends each RPC Call message.  They are provided to the responder to use for transmiting the associated RPC Reply message back to the requester.  </p>
+<p id="rfc.section.1.p.2">In particular, when the Payload Stream of an RPC Reply message is expected to be large, the requester allocates and registers a Reply chunk.  The responder transfers the RPC Reply message's Payload stream directly into the requester memory associated with that chunk, then indicates that the RPC Reply is ready.  The requester invalidates the memory region.  </p>
+<p id="rfc.section.1.p.3">In most cases, Upper Layer Protocols are capable of accurately calculating the maximum size of RPC Reply messages.  In addition, the average size of RPC Reply messages is small, making the risk of Reply chunk overrun exceptionally small.  </p>
+<p id="rfc.section.1.p.4">However, on rare occasions an Upper Layer Protocol might not be able to derive a reply size upper bound.  An example of this is the NFS version 4.1 GETATTR operation <a href="#RFC5661" class="xref">[RFC5661]</a> <a href="#RFC8267" class="xref">[RFC8267]</a> where a reply can contain an unpredictable number of data content and hole descriptors.  </p>
+<p id="rfc.section.1.p.5">Further, since the average size of actual RPC Replies is small, requesters frequently allocate and register a Reply chunk for a reply that, once it has been constructed by the responder, is small enough to be sent inline.  In this case, a responder is free to either populate the Reply chunk or send the RPC Reply without the use of the Reply chunk.  The requester's cost of preparing the Reply chunk has been wasted, and the extra registration and invalidation adds unwanted latency to the operation.  </p>
+<p id="rfc.section.1.p.6">A better method of handling RPC replies could ensure that RPC Replies can be received even when the maximum possible size of some replies cannot be calculated in advance.  This method could also ensure that no extra memory registration/invalidation operations are necessary to make this guarantee.  </p>
+<p id="rfc.section.1.p.7">This document resurrects the responder-provided Read chunk mechanism that was briefly outlined in <a href="#RFC5666" class="xref">[RFC5666]</a> to achieve these goals.  The discussion in this document assumes the reader is familiar with <a href="#RFC8166" class="xref">[RFC8166]</a>.  </p>
+<h1 id="rfc.section.2">
+<a href="#rfc.section.2">2.</a> <a href="#section:7f03ab65-6995-4173-ad9d-62ff5be186f5" id="section:7f03ab65-6995-4173-ad9d-62ff5be186f5">Requirements Language</a>
+</h1>
+<p id="rfc.section.2.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <a href="#RFC2119" class="xref">[RFC2119]</a> <a href="#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.  </p>
+<h1 id="rfc.section.3">
+<a href="#rfc.section.3">3.</a> <a href="#section:e2710cf2-8bb2-4a08-b60d-9270035d71ff" id="section:e2710cf2-8bb2-4a08-b60d-9270035d71ff">Problem Statement</a>
+</h1>
+<p id="rfc.section.3.p.1">RPC-over-RDMA version 1 uses an RDMA Send request to transmit transport headers and small RPC messages.  </p>
+<p id="rfc.section.3.p.2">Each peer on an RPC-over-RDMA transport connection provisions Receive buffers in which to capture incoming RDMA Send messages.  There is a limited number of these buffers, necessitating accounting in the transport protocol to prevent a peer from emitting more Send operations than the receiver is prepared for.  </p>
+<p id="rfc.section.3.p.3">Because the selection of Receive Work Request to handle an incoming Send is outside the control of the host O/S, the smallest buffer in this pool determines the largest size message that can be received.  The size of the largest message that can be received via RDMA Send is known as the receiver's "inline threshold" <a href="#RFC8166" class="xref">[RFC8166]</a>.  </p>
+<p id="rfc.section.3.p.4">When marshaling an RPC transaction, a requester allocates and registers a Reply chunk whenever the maximum possible size of the corresponding RPC-over-RDMA reply is larger than the requester's receive inline threshold.  The Reply chunk is presented to the responder as part of the RPC Call.  The responder may place the associated RPC Reply message in the memory region linked with this Reply chunk.  </p>
+<h1 id="rfc.section.3.1">
+<a href="#rfc.section.3.1">3.1.</a> <a href="#section:c2c76d84-9f9c-47dc-b2c2-c9e3326d7147" id="section:c2c76d84-9f9c-47dc-b2c2-c9e3326d7147">Reply Chunk Overrun</a>
+</h1>
+<p id="rfc.section.3.1.p.1">If a responder overruns a Reply chunk during an RDMA Write, a memory protection error occurs.  This typically results in connection loss.  Any RPC transactions running on that connection must be retransmitted.  The failing RPC transaction will never get a reply, and retransmitting it may result in additional connection loss events.  </p>
+<p id="rfc.section.3.1.p.2">A smart responder compares the size of an RPC Reply with the size of the target Reply chunk before initiating the placement of data in that chunk.  A generic RDMA_ERROR message reports the problem and the requester can terminate the RPC transaction.  </p>
+<p id="rfc.section.3.1.p.3">In either case, the RPC is executed by the responder, but the requester does not receive the results or acknowledgement of its completion.  </p>
+<h1 id="rfc.section.3.2">
+<a href="#rfc.section.3.2">3.2.</a> <a href="#section:99c8d4c9-6391-4b4e-bdbc-9c5829d4d36e" id="section:99c8d4c9-6391-4b4e-bdbc-9c5829d4d36e">Reply Size Calculation</a>
+</h1>
+<p id="rfc.section.3.2.p.1">To determine when a Reply chunk is needed, requesters calculate the maximum possible size of the RPC Reply message expected for each transaction.  Upper Layer Bindings, such as <a href="#RFC8267" class="xref">[RFC8267]</a> provide guidance on how to calculate Reply sizes and in what cases the Upper Layer Protocol might have difficulty giving an exact upper bound.  </p>
+<p id="rfc.section.3.2.p.2">Unfortunately, there are rare cases where an upper bound cannot be computed.  For instance, there is no way to know how large an NFS Access Control List (ACL) is until it is retrieved from an NFS server <a href="#RFC5661" class="xref">[RFC5661]</a>.  There is no protocol-specified limit on the size of NFS ACLs.  When retrieving an NFS ACL, there is always a risk, albeit a small one, that the NFS client has not provided a large enough Reply chunk, and that therefore the NFS server will not be able to return that ACL to the client (unless somehow a larger Reply chunk can be provided).  </p>
+<h1 id="rfc.section.3.3">
+<a href="#rfc.section.3.3">3.3.</a> <a href="#section:42ec6500-676e-4952-984e-47f393fb072e" id="section:42ec6500-676e-4952-984e-47f393fb072e">Requester Registration Costs</a>
+</h1>
+<p id="rfc.section.3.3.p.1">For an Upper Layer Protocol such as NFS version 4.2 <a href="#RFC7862" class="xref">[RFC7862]</a>, NFS COMPOUND Call and Reply messages can be large on occasion.  For instance, an NFSv4.2 COMPOUND can contain a LOOKUP operation together with a GETATTR operation.  The size of a LOOKUP result is relatively small.  However, the GETATTR in that COMPOUND may request attributes, such as ACLs or security labels, that can grow arbitrarily large and whose size is not known in advance.  </p>
+<p id="rfc.section.3.3.p.2">Thus a requester can be responsible for provisioning quite a large reply buffer for each LOOKUP COMPOUND, which is a frequent request.  If the maximum possible reply message can be large, the requester is required to provide a Reply chunk.  Most of the time, however, the actual size of a LOOKUP COMPOUND reply is small enough to be sent using one RDMA Send.  </p>
+<p id="rfc.section.3.3.p.3">In other words, an NFS version 4 client provides a Reply chunk quite frequently during RPC transactions, but NFS version 4 servers almost never need to use it because the actual size of replies is typically less than the inline threshold.  The overhead of registering and invalidating this chunk is significant.  Moreover it is unnecessary whenever the size of an actual RPC reply is small.  </p>
+<p id="rfc.section.3.3.p.4">Before an RPC transaction is terminated, a requester is responsible for fencing the Reply chunk from the responder <a href="#RFC8166" class="xref">[RFC8166]</a>.  That makes RPC completion synchronous with Reply chunk invalidation.  Therefore the latency of Reply chunk invalidation adds to the total execution time of the RPC transaction.  </p>
+<h1 id="rfc.section.3.4">
+<a href="#rfc.section.3.4">3.4.</a> <a href="#section:ae3c1ba1-8403-4571-a77d-7f4e59bcc0d3" id="section:ae3c1ba1-8403-4571-a77d-7f4e59bcc0d3">Denial of Service</a>
+</h1>
+<p id="rfc.section.3.4.p.1">When an RPC transaction is canceled or aborted (for instance, because an application process exited prematurely), a requester must invalidate or set aside Write and Reply chunks associated with that transaction <a href="#RFC8166" class="xref">[RFC8166]</a>.  </p>
+<p id="rfc.section.3.4.p.2">This is because that RPC transaction is still running on the responder.  The responder remains obligated to return the result of that transaction via RDMA Write, if there are Write or Reply chunks.  If memory registered on behalf of that transaction is re-used, the requester must protect that memory from server RDMA Writes associated with previous transactions by fencing it from the responder.  The responder triggers a memory protection error when it writes into those memory regions, and the connection is lost.  </p>
+<p id="rfc.section.3.4.p.3">A malfunctioning application or a malicious user on the requester can create a situation where RPCs are continuously initiated and then aborted, resulting in responder replies that repeatedly terminate the underlying RPC-over-RDMA connection.  </p>
+<p id="rfc.section.3.4.p.4">A rogue responder can purposely overrun a Reply chunk to kill a connection.  Repeated connection loss can result in a Denial of Service.  </p>
+<h1 id="rfc.section.3.5">
+<a href="#rfc.section.3.5">3.5.</a> <a href="#section:b2db3875-f2ae-4be9-a9ad-2ee1accb7973" id="section:b2db3875-f2ae-4be9-a9ad-2ee1accb7973">Estimating Transport Header Size</a>
+</h1>
+<p id="rfc.section.3.5.p.1">To determine whether a Reply chunk is needed, a requester computes the size of the Reply's Transport Header and the maximum possible size of the RPC Reply message, and sums the two.  If the sum is smaller than the requester's receive inline threshold, a Reply chunk is not required.  </p>
+<p id="rfc.section.3.5.p.2">The size of a Transport Header depends on how many Write chunks the requester provides, whether a Reply chunk is needed, and how many segments are contained in provided Write and Reply chunks.  </p>
+<p id="rfc.section.3.5.p.3">When the total size of the Reply message is already near the inline threshold, therefore, a requester has to know whether a Reply chunk is needed (and how many segments it contains) before it can determine if a Reply chunk is needed.  </p>
+<p id="rfc.section.3.5.p.4">A requester can resort to limiting Transport Header size to a fixed value that ensures this computation does not become a recursion.  However, as in earlier sections, this can mean that some RPC transactions where a Reply chunk is not strictly necessary must incur the cost of preparing a Reply chunk.  </p>
+<h1 id="rfc.section.4">
+<a href="#rfc.section.4">4.</a> <a href="#section:c0673ccc-8fde-4f53-a56e-9eba8fc539b2" id="section:c0673ccc-8fde-4f53-a56e-9eba8fc539b2">Responder-Provided Read Chunks</a>
+</h1>
+<p id="rfc.section.4.p.1">A potential mechanism for resolving these issues is suggested in Section 3.4 of <a href="#RFC5666" class="xref">[RFC5666]</a>: </p>
+
+<ul class="empty"><li>In the absence of a server-provided read chunk list in the reply, if the encoded reply overflows the posted receive buffer, the RPC will fail with an RDMA transport error.  </li></ul>
+
+<p> When sending a large RPC Call message, requesters already employ Read chunks.  There is no advance indication or limit on the size of any RPC Call message.  To achieve the same flexibility for RPC Replies, Read chunks can be used in the reverse direction (e.g., responder exposes memory, requester initiates RDMA Read).  </p>
+<p id="rfc.section.4.p.2">Rather than a requester providing a Reply chunk for conveying an as-yet-unconstructed large reply, a responder can expose a Read chunk containing the actual Payload stream of the RPC Reply message.  A responder would employ a Read chunk to return a reply any time requester-provided reply resources are not adequate.  </p>
+<p id="rfc.section.4.p.3">The requester does not have to calculate a reply size maximum or register and invalidate a Reply chunk in these cases.  Without a requester-provided Reply chunk, the responder sends each reply inline, except when the actual size of an RPC Reply message is larger than the receiver's inline threshold.  </p>
+<p id="rfc.section.4.p.4">This results in no wasted activity on the requester and arbitrarily large RPC Replies can be received reliably.  </p>
+<p id="rfc.section.4.p.5">Current RPC-over-RDMA version 1 implementations do not support responder-provided Read chunks, although RPC-over-RDMA version 1 did have this support in the past <a href="#RFC5666" class="xref">[RFC5666]</a>.  Adapting this deprecated mechanism for new RPC-over-RDMA transports is straightforward.  </p>
+<h1 id="rfc.section.4.1">
+<a href="#rfc.section.4.1">4.1.</a> <a href="#section:c88eaf74-6d45-4179-8585-24d466e0e29d" id="section:c88eaf74-6d45-4179-8585-24d466e0e29d">Specification</a>
+</h1>
+<p id="rfc.section.4.1.p.1">A responder MAY choose to send an RPC Reply using a Position Zero Read chunk comprised of one or more RDMA segments.  Position Zero Read chunks are defined in Section 3.5.3 of <a href="#RFC8166" class="xref">[RFC8166]</a>.  </p>
+<p id="rfc.section.4.1.p.2">Similar to its use in an RPC Call, a Position Zero Read chunk in an RPC Reply contains an RPC Reply's Payload stream.  Position Zero Read chunks are always sent using an RPC-over-RDMA RDMA_NOMSG message.  </p>
+<p id="rfc.section.4.1.p.3">In other words, a responder-provided Read chunk can replace the use of a Reply chunk in Long Replies.  And, as with Reply chunks, a responder must still make use of Write chunks provided by the requester.  </p>
+<h1 id="rfc.section.4.1.1">
+<a href="#rfc.section.4.1.1">4.1.1.</a> <a href="#section:10225f43-256d-4122-8968-7bc2d784e5ac" id="section:10225f43-256d-4122-8968-7bc2d784e5ac">Responder Duties</a>
+</h1>
+<p id="rfc.section.4.1.1.p.1">A responder MUST send a Position Zero Read chunk when the actual size of the RPC Reply's Payload stream exceeds all requester-provided reply resources; that is, when the inline threshold and any provided Reply chunk are both too small to accommodate the Payload stream of the reply.  </p>
+<p id="rfc.section.4.1.1.p.2">If a responder does not support responder-provided Read chunks in this case, it MUST return an appropriate permanent transport error to terminate the requester's RPC transaction.  </p>
+<h1 id="rfc.section.4.1.2">
+<a href="#rfc.section.4.1.2">4.1.2.</a> <a href="#section:e1ae6748-096b-46c4-92aa-e36e170a66d8" id="section:e1ae6748-096b-46c4-92aa-e36e170a66d8">Requester Duties</a>
+</h1>
+<p id="rfc.section.4.1.2.p.1">Upon receipt of an RDMA_NOMSG message containing a Position Zero Read chunk, the requester pulls the RPC Reply's Payload stream from the responder.  </p>
+<p id="rfc.section.4.1.2.p.2">After RDMA Read operations have completed (successfully or in error), the requester MUST inform the responder that it may invalidate the Read chunk containing the RPC Reply message.  This is referred to as "pull completion notification".  </p>
+<h1 id="rfc.section.4.1.3">
+<a href="#rfc.section.4.1.3">4.1.3.</a> <a href="#section:84007d02-9c25-48af-ae76-be1ac72935e6" id="section:84007d02-9c25-48af-ae76-be1ac72935e6">Pull Completion Notification</a>
+</h1>
+<p id="rfc.section.4.1.3.p.1">Pull completion notification is accomplished in one of two ways: </p>
+
+<ul>
+<li>The requester can send an RDMA_DONE message with the rdma_xid field set to the same value as the rdma_xid field in the RDMA_NOMSG request. Or, </li>
+<li>The requester can piggyback the pull completion notification in the transport header of a subsequent RPC Call, if the transport protocol has such a facility.  </li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.4.1.3.p.2">When an RPC transaction is aborted on a requester, the requester normally forgets its XID.  If a requester receives a reply bearing a Position Zero Read chunk and does not recognize the XID, the requester MUST notify the responder of pull completion.  </p>
+<p id="rfc.section.4.1.3.p.3">Whenever a responder receives a pull completion notification for an XID for which there is no Read chunk waiting to be invalidated, the responder MUST silently drop the notification.  </p>
+<p id="rfc.section.4.1.3.p.4">If a requester receives an RPC Reply via a responder-provided Read chunk, but does not support such chunks, it MUST inform the responder of pull completion and terminate the RPC transaction.  </p>
+<p id="rfc.section.4.1.3.p.5">A malicious or broken requester might neglect to send pull completion notifications for one or more RPC transactions that included responder-provided Read chunks.  To prevent exhaustion of responder resources, a responder can choose to invalidate its Read chunks after waiting for a short period.  If the requester attempts additional RDMA Read operations against that Read chunk, a remote access error occurs and the connection is lost.  </p>
+<h1 id="rfc.section.4.1.4">
+<a href="#rfc.section.4.1.4">4.1.4.</a> <a href="#section:89c47346-0a5e-4776-bd6e-79fa889122e7" id="section:89c47346-0a5e-4776-bd6e-79fa889122e7">Remote Invalidation</a>
+</h1>
+<p id="rfc.section.4.1.4.p.1">Remote Invalidation can reduce or eliminate the need for the responder to explicitly invalidate memory containing an RPC Reply message.  </p>
+<p id="rfc.section.4.1.4.p.2">Remote Invalidation might be done by transmitting an RDMA_DONE message using RDMA Send With Invalidate.  If instead pull completion notification is piggybacked on a subsequent RPC Call, a facility for Remote Invalidation would have to be built into RPC Call processing.  </p>
+<p id="rfc.section.4.1.4.p.3">If Remote Invalidate support is not indicated by one or both peers, messages carrying pull completion notification MUST be transmitted using RDMA Send.  If Remote Invalidation support is indicated by both peers, messages carrying pull completion messages SHOULD be transmitted using RDMA Send With Invalidate.  </p>
+<p id="rfc.section.4.1.4.p.4">The rule for choosing the value of the Send With Invalidate Work Request's inv_handle field depends on the version of the transport protocol that is use.  If the responder has provided an R_key that may be invalidated, the requester MUST present only that R_key when using RDMA Send With Invalidate.  </p>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#section:86cdaa3a-2bbd-4d36-a10d-859bdc41e426" id="section:86cdaa3a-2bbd-4d36-a10d-859bdc41e426">Analysis</a>
+</h1>
+<h1 id="rfc.section.5.1">
+<a href="#rfc.section.5.1">5.1.</a> <a href="#section:39801b4e-7f2a-4be0-85de-8c03f40ff39f" id="section:39801b4e-7f2a-4be0-85de-8c03f40ff39f">Benefits</a>
+</h1>
+<h1 id="rfc.section.5.1.1">
+<a href="#rfc.section.5.1.1">5.1.1.</a> <a href="#section:1780489b-97da-4820-abd5-fe5c7d3c5531" id="section:1780489b-97da-4820-abd5-fe5c7d3c5531">Less Frequent Use of Explicit RDMA</a>
+</h1>
+<p id="rfc.section.5.1.1.p.1">The vast majority of RPC Replies can be conveyed via RDMA_MSG.  No extra Reply chunk registration and invalidation cost is incurred when a large RPC Reply message is possible but the actual reply size is small.  This reduces or even eliminates the use of explicit RDMA for frequent small-to-moderate-size replies, improving the average latency of individual RPCs and allowing RNIC and platform resources to scale better.  </p>
+<h1 id="rfc.section.5.1.2">
+<a href="#rfc.section.5.1.2">5.1.2.</a> <a href="#section:d93ba2c4-8785-458d-8651-c889d692c49f" id="section:d93ba2c4-8785-458d-8651-c889d692c49f">Support for Arbitrarily Large Replies</a>
+</h1>
+<p id="rfc.section.5.1.2.p.1">The responder-provided Read chunk approach accommodates arbitrarily large replies.  Requesters no longer need to calculate the maximum size of RPC Reply messages, even if a Reply chunk is provided.  </p>
+<h1 id="rfc.section.5.1.3">
+<a href="#rfc.section.5.1.3">5.1.3.</a> <a href="#section:1babef13-1778-4323-ad85-e0e5f53ed97e" id="section:1babef13-1778-4323-ad85-e0e5f53ed97e">Protection of Connection After RPC Cancellation</a>
+</h1>
+<p id="rfc.section.5.1.3.p.1">When an RPC is canceled on the requester (say, because the requesting application has been terminated), and no Reply chunk is provided, the requester is no longer responsible for invalidating that RPC's Reply chunk.  When the responder sends the reply, it provides a Position Zero Read chunk and does not use RDMA Write to transmit the RPC Reply message.  The transport connection is preserved because no memory protection violation can occur.  </p>
+<h1 id="rfc.section.5.1.4">
+<a href="#rfc.section.5.1.4">5.1.4.</a> <a href="#section:c1097710-7404-46e3-ae16-eb5f7af03028" id="section:c1097710-7404-46e3-ae16-eb5f7af03028">Asynchronous Chunk Invalidation</a>
+</h1>
+<p id="rfc.section.5.1.4.p.1">Registration of a responder-provided Read chunk must be completed before sending the RDMA_NOMSG message conveying the chunk information.  However, pull completion notification and subsequent responder-side memory invalidation can be performed after the RPC transaction has completed on the requester.  Because those are asynchronous to RPC completion, the additional latency is not attributed to the execution time of the RPC transaction.  </p>
+<h1 id="rfc.section.5.2">
+<a href="#rfc.section.5.2">5.2.</a> <a href="#section:207be6e7-1b55-4697-ae3c-4903633daff3" id="section:207be6e7-1b55-4697-ae3c-4903633daff3">Costs</a>
+</h1>
+<h1 id="rfc.section.5.2.1">
+<a href="#rfc.section.5.2.1">5.2.1.</a> <a href="#section:77493430-fc8d-4315-b8ea-4ac04f418b7e" id="section:77493430-fc8d-4315-b8ea-4ac04f418b7e">Responder Memory Exposure</a>
+</h1>
+<p id="rfc.section.5.2.1.p.1">Responder memory is registered and exposed to requesters when replying.  When a responder has properly allocated a Protection Domain for each connection and uses appropriate R_key rotation techniques (see <a href="#section:32d8f615-4fb6-4400-84fc-61508af77f27" class="xref">Section 7</a>), the exposure is minimal.  However, because current RPC-over-RDMA responder implementations do not expose memory to requesters, they typically share one Protection Domain among all connections.  </p>
+<h1 id="rfc.section.5.2.2">
+<a href="#rfc.section.5.2.2">5.2.2.</a> <a href="#section:836a9b54-993e-468e-9ac8-5db0a674d42c" id="section:836a9b54-993e-468e-9ac8-5db0a674d42c">Round Trip Penalty</a>
+</h1>
+<p id="rfc.section.5.2.2.p.1">Using a Read chunk for large replies introduces a round-trip penalty.  A requester can provide a Reply chunk to avoid this penalty.  However: </p>
+
+<ul>
+<li>The Read chunk round-trip penalty would be paid much less often than the Reply chunk registration cost is paid today, since responder-provided Read chunks are used only when necessary </li>
+<li>Read chunk frequency is reduced even further as the inline threshold is increased past the average size of the Upper Layer Protocol's RPC Replies </li>
+<li>Invalidation of a Reply chunk is synchronous with RPC completion, and may take as long as a round trip to the responder </li>
+<li>Read chunks are typically used for large payloads, where it is likely that data transmission time greatly exceeds the round-trip time </li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.5.2.2.p.2">There are a few particular situations where the frequency of large replies is high.  For example, the use of the krb5i or krb5p GSS services with RPC-over-RDMA require that Payload reduction is not used.  Thus, RPC-over-RDMA peers use only pure RDMA Sends or Long messages when these services are in use.  The actual size of a READDIR reply is often unpredictable but is frequently large.  In these two cases, using a Reply chunk could be the more efficient default choice.  </p>
+<h1 id="rfc.section.5.2.3">
+<a href="#rfc.section.5.2.3">5.2.3.</a> <a href="#section:55edba54-cf57-430e-b748-0502644e3473" id="section:55edba54-cf57-430e-b748-0502644e3473">Credit Accounting Complexity</a>
+</h1>
+<p id="rfc.section.5.2.3.p.1">Credit accounting is made more complex by the use of RDMA_DONE messages after RDMA Read operations have completed.  Sending an RDMA_DONE message consumes one credit, temporarily reducing RPC concurrency on the connection.  There is no response to RDMA_DONE, so it is not clear to the sender when that credit becomes available again.  One way to resolve this is to add a new message type to the protocol, RDMA_ACK, which could be used any time there is a uni-directional transport message to maintain the proper balance of credit grants and responses.  </p>
+<p id="rfc.section.5.2.3.p.2">Alternately, if the transport protocol supports piggybacking pull completion notification on RPC Call messages, the requester can piggyback in most cases to simplify credit accounting.  An explicit RDMA_DONE would be necessary only during light workloads, or the ULP could post an RPC NULL containing a piggybacked pull completion notification in these cases.  </p>
+<h1 id="rfc.section.5.3">
+<a href="#rfc.section.5.3">5.3.</a> <a href="#section:508c2a60-bac5-464a-8356-2632af4dedf9" id="section:508c2a60-bac5-464a-8356-2632af4dedf9">Selecting a Reply Mechanism</a>
+</h1>
+<p id="rfc.section.5.3.p.1">This section illustrates some possible implementation choices.  </p>
+<h1 id="rfc.section.5.3.1">
+<a href="#rfc.section.5.3.1">5.3.1.</a> <a href="#section:3ff8ee17-d692-4863-829e-af45b3e4556f" id="section:3ff8ee17-d692-4863-829e-af45b3e4556f">Requester</a>
+</h1>
+<p id="rfc.section.5.3.1.p.1">As an RPC Call is constructed, a requester might choose a reply mechanism based on its estimation of the range of possible sizes of the reply.  </p>
+
+<dl>
+<dt>Responder-provided Read chunk</dt>
+<dd style="margin-left: 8">
+<br> The requester knows the minimum size of the reply is smaller than the inline threshold, but the maximum size of the reply is larger than the inline threshold; or the requester cannot calculate the maximum size of the reply.  The client does not provide a Reply chunk, and relies on a responder-provider Read chunk to handle large replies.  </dd>
+<dt>Reply chunk</dt>
+<dd style="margin-left: 8">
+<br> The requester knows the minimum and maximum size of the reply is larger than the inline threshold.  The requester provides a Reply chunk.  </dd>
+<dt>Send-only</dt>
+<dd style="margin-left: 8">
+<br> The requester knows the maximum size of the reply is smaller than the inline threshold.  The requester does not provide a Reply chunk, and relies on a responder-provider Read chunk to handle large replies.  </dd>
+</dl>
+
+<p> </p>
+<p id="rfc.section.5.3.1.p.2">A requester whose design requires Reply chunk invalidation after an RPC transaction is canceled might choose to never use Reply chunks, in favor of minimizing opportunities for connection loss.  </p>
+<h1 id="rfc.section.5.3.2">
+<a href="#rfc.section.5.3.2">5.3.2.</a> <a href="#section:ede6d641-5a4d-417e-b99c-48123674bd86" id="section:ede6d641-5a4d-417e-b99c-48123674bd86">Responder</a>
+</h1>
+<p id="rfc.section.5.3.2.p.1">After a responder has constructed an RPC Reply, it might choose which reply mechanism to employ based on the actual size of the Payload stream of the RPC Reply message.  </p>
+
+<dl>
+<dt>Responder-provided Read chunk</dt>
+<dd style="margin-left: 8">
+<br> The Payload stream is larger than the inline threshold and either no Reply chunk was provided or the provided Reply chunk is too small.  The responder uses a responder-provided Read chunk.  </dd>
+<dt>Reply chunk</dt>
+<dd style="margin-left: 8">
+<br> If a usable Reply chunk is available, the responder uses the Reply chunk.  </dd>
+<dt>Send-only</dt>
+<dd style="margin-left: 8">
+<br> If no Reply chunk is available and the Payload stream fits within the inline threshold, the responder uses only Send or Send With Invalidate to transmit the reply.  </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.5.4">
+<a href="#rfc.section.5.4">5.4.</a> <a href="#section:6b5062e6-4c27-43ad-a7e7-864aec435e6a" id="section:6b5062e6-4c27-43ad-a7e7-864aec435e6a">Implementation Complexity</a>
+</h1>
+<h1 id="rfc.section.5.4.1">
+<a href="#rfc.section.5.4.1">5.4.1.</a> <a href="#section:522f1e70-9d37-4998-859c-08c70cd8b36c" id="section:522f1e70-9d37-4998-859c-08c70cd8b36c">RPC Call Path</a>
+</h1>
+<p id="rfc.section.5.4.1.p.1">Implementation of responder-provided Read chunks introduces little or no additional complexity to the end-to-end RPC Call path.  Unless a requester implementer chooses to implement support for both Reply chunks and responder-provided Read chunks, there could be a net loss of code and run-time complexity in the RPC Call hot path.  </p>
+<p id="rfc.section.5.4.1.p.2">The responder's RPC Call path needs to recognize RDMA_DONE messages and initiate invalidation of Read chunks.  Because invalidation can be asynchronous, it is possible to perform Read chunk invalidation in a separate worker thread.  </p>
+<h1 id="rfc.section.5.4.2">
+<a href="#rfc.section.5.4.2">5.4.2.</a> <a href="#section:685a8a8e-87e3-460a-a95f-77252205cd7a" id="section:685a8a8e-87e3-460a-a95f-77252205cd7a">RPC Reply Path</a>
+</h1>
+<p id="rfc.section.5.4.2.p.1">On the RPC Reply path side, logic to initiate registration of Read chunks and wait for completion is added to the responder.  This path is not part of the hot path because it is used only infrequently.  </p>
+<p id="rfc.section.5.4.2.p.2">The requester's reply handling hot path must recognize when Read chunks are present in an RDMA_NOMSG message, and shunt execution to code that can initiate an RDMA Read and wait for completion.  Once complete, the requester posts an RDMA_DONE message.  </p>
+<h1 id="rfc.section.5.4.3">
+<a href="#rfc.section.5.4.3">5.4.3.</a> <a href="#section:b482cf76-ef44-4956-a214-ead2e800cf36" id="section:b482cf76-ef44-4956-a214-ead2e800cf36">Managing RDMA_DONE messages</a>
+</h1>
+<p id="rfc.section.5.4.3.p.1">In order for a responder to match incoming RDMA_DONE messages to reply buffers waiting to be invalidated, it might keep references to these buffers in a data structure searchable by XID.  This is similar to managing a set of pending backchannel replies.  </p>
+<p id="rfc.section.5.4.3.p.2">When an RDMA_DONE message arrives, the responder matches the XID in the message to a waiting reply buffer, invalidates that buffer, and removes the XID from the data structure.  </p>
+<p id="rfc.section.5.4.3.p.3">This data structure can also be used for housekeeping tasks such as: </p>
+
+<ul>
+<li>Invalidating waiting buffers after a timeout, in case the requester never sends RDMA_DONE </li>
+<li>Ignoring retransmitted or garbage RDMA_DONE requests </li>
+<li>Explicitly invalidating waiting Read chunks after a connection loss, if necessary </li>
+<li>Invalidating waiting buffers on device removal </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.5.5">
+<a href="#rfc.section.5.5">5.5.</a> <a href="#section:e3b5b262-ded6-400b-b335-37f43bef5a41" id="section:e3b5b262-ded6-400b-b335-37f43bef5a41">Alternatives</a>
+</h1>
+<p id="rfc.section.5.5.p.1">Increasing the inline threshold reduces the likelihood of needing a Reply chunk, but does not eliminate the risks associated with unpredictably large replies.  </p>
+<p id="rfc.section.5.5.p.2">Message Continuation is more efficient than an explicit RDMA operation, and does not require the exposure of requester or responder memory </p>
+<p id="rfc.section.5.5.p.3">However, Message Continuation still limits the maximum size of a conveyed message.  As with a larger inline threshold, without responder-provided Read chunks, reply size estimation is still required to determine when a Reply chunk is required, and therefore there is still risk associated with unpredictably large replies.  </p>
+<p id="rfc.section.5.5.p.4">Message Continuation introduces complexity in the management of RPC-over-RDMA credit grants because the relationship between RPC transactions and credits is no longer one-to-one.  Credit management logic is an integral part of the RPC Call and Reply hot path on the requester.  </p>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#section:418a57dc-eb88-418a-8cb3-13673e2e8ad9" id="section:418a57dc-eb88-418a-8cb3-13673e2e8ad9">Interoperation Considerations</a>
+</h1>
+<p id="rfc.section.6.p.1">When a requester supports responder-provided Read chunks, it is likely to neglect providing Reply chunks in some cases.  A responder that does not support responder-provided Read chunks can convey a transport-level error when it has generated an RPC Reply that is larger than the available reply resources.  </p>
+<p id="rfc.section.6.p.2">The situation is more problematic if a responder supports responder-provided Read chunks and sends them to a requester that is not able to recognize and unmarshal them.  The RPC transaction would never complete, and the requester would never send a pull completion notification.  </p>
+<p id="rfc.section.6.p.3">Thus responder-provided Read chunks MUST be used only when both peers support them: Either the base protocol version always has support enabled, or the base protocol provides an extension mechanism that indicates when support is available.  </p>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> <a href="#section:32d8f615-4fb6-4400-84fc-61508af77f27" id="section:32d8f615-4fb6-4400-84fc-61508af77f27">Security Considerations</a>
+</h1>
+<p id="rfc.section.7.p.1">The less frequent use of RDMA Write reduces opportunities for memory overrun on the requester, and reduces the risk of connection loss after an application is terminated prematurely.  This reduces exposure to accidental or malicious Denial of Service attacks.  </p>
+<p id="rfc.section.7.p.2">Responder-provided Read chunks are exposed for read-only access.  Remote actors cannot alter the contents of exposed read-only memory, though a man-in-the-middle can read or alter RDMA payloads while they are in transit.  The use of RPCSEC GSS or a transport-layer confidentiality service completely blocks payload access by unintended recipients.  </p>
+<p id="rfc.section.7.p.3">Recommendations about adequate R_key rotation and the appropriate use of Protection Domains can be found in Section 8.1 of <a href="#RFC8166" class="xref">[RFC8166]</a>.  These recommendations apply when responders expose memory to convey the Payload stream of an RPC Reply message.  </p>
+<p id="rfc.section.7.p.4">Otherwise, this mechanism does not alter the attack surface of a transport protocol that employs it.  </p>
+<h1 id="rfc.section.8">
+<a href="#rfc.section.8">8.</a> <a href="#section:fe47d3e9-d9ba-468b-aa73-838ed4e3aa4f" id="section:fe47d3e9-d9ba-468b-aa73-838ed4e3aa4f">IANA Considerations</a>
+</h1>
+<p id="rfc.section.8.p.1">This document does not require actions by IANA.  </p>
+<h1 id="rfc.references">
+<a href="#rfc.references">9.</a> References</h1>
+<h1 id="rfc.references.1">
+<a href="#rfc.references.1">9.1.</a> Normative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8166">[RFC8166]</b></td>
+<td class="top">
+<a>Lever, C.</a>, <a>Simpson, W.</a> and <a>T. Talpey</a>, "<a href="https://tools.ietf.org/html/rfc8166">Remote Direct Memory Access Transport for Remote Procedure Call Version 1</a>", RFC 8166, DOI 10.17487/RFC8166, June 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
+<td class="top">
+<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.references.2">
+<a href="#rfc.references.2">9.2.</a> Informative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="RFC5661">[RFC5661]</b></td>
+<td class="top">
+<a>Shepler, S.</a>, <a>Eisler, M.</a> and <a>D. Noveck</a>, "<a href="https://tools.ietf.org/html/rfc5661">Network File System (NFS) Version 4 Minor Version 1 Protocol</a>", RFC 5661, DOI 10.17487/RFC5661, January 2010.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5666">[RFC5666]</b></td>
+<td class="top">
+<a>Talpey, T.</a> and <a>B. Callaghan</a>, "<a href="https://tools.ietf.org/html/rfc5666">Remote Direct Memory Access Transport for Remote Procedure Call</a>", RFC 5666, DOI 10.17487/RFC5666, January 2010.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7862">[RFC7862]</b></td>
+<td class="top">
+<a>Haynes, T.</a>, "<a href="https://tools.ietf.org/html/rfc7862">Network File System (NFS) Version 4 Minor Version 2 Protocol</a>", RFC 7862, DOI 10.17487/RFC7862, November 2016.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8267">[RFC8267]</b></td>
+<td class="top">
+<a>Lever, C.</a>, "<a href="https://tools.ietf.org/html/rfc8267">Network File System (NFS) Upper-Layer Binding to RPC-over-RDMA Version 1</a>", RFC 8267, DOI 10.17487/RFC8267, October 2017.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.acknowledgments"><a href="#rfc.acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.A.p.1">Many thanks go to Karen Dietke, Chunli Zhang, Dai Ngo, and Tom Talpey.  The author also wishes to thank Bill Baker and Greg Marsden for their support of this work.  </p>
+<p id="rfc.section.A.p.2">Special thanks go to Transport Area Director Spencer Dawkins, NFSV4 Working Group Chairs Spencer Shepler and Brian Pawlowski, and NFSV4 Working Group Secretary Thomas Haynes for their support.  </p>
+<h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Charles Lever</span> 
+	  <span class="n hidden">
+		<span class="family-name">Lever</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Oracle Corporation </span>
+	<span class="adr">
+	  <span class="vcardline">1015 Granger Avenue</span>
+
+	  <span class="vcardline">
+		<span class="locality">Ann Arbor</span>,  
+		<span class="region">MI</span> 
+		<span class="code">48104</span>
+	  </span>
+	  <span class="country-name vcardline">United States of America</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:chuck.lever@oracle.com">chuck.lever@oracle.com</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>
