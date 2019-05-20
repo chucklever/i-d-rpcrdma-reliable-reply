@@ -4,8 +4,8 @@
 
 Network File System Version 4                                   C. Lever
 Internet-Draft                                                    Oracle
-Intended status: Experimental                               May 10, 2019
-Expires: November 11, 2019
+Intended status: Experimental                               May 20, 2019
+Expires: November 21, 2019
 
 
  Improving the Performance and Reliability of RPC Replies on RPC-over-
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 11, 2019.
+   This Internet-Draft will expire on November 21, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Lever                   Expires November 11, 2019               [Page 1]
+Lever                   Expires November 21, 2019               [Page 1]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Lever                   Expires November 11, 2019               [Page 2]
+Lever                   Expires November 21, 2019               [Page 2]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -165,7 +165,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 3]
+Lever                   Expires November 21, 2019               [Page 3]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -221,7 +221,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 4]
+Lever                   Expires November 21, 2019               [Page 4]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -277,7 +277,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 5]
+Lever                   Expires November 21, 2019               [Page 5]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -333,7 +333,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 6]
+Lever                   Expires November 21, 2019               [Page 6]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -389,7 +389,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 7]
+Lever                   Expires November 21, 2019               [Page 7]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -445,7 +445,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 8]
+Lever                   Expires November 21, 2019               [Page 8]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -501,7 +501,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019               [Page 9]
+Lever                   Expires November 21, 2019               [Page 9]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -557,7 +557,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 10]
+Lever                   Expires November 21, 2019              [Page 10]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -613,7 +613,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 11]
+Lever                   Expires November 21, 2019              [Page 11]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -669,7 +669,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 12]
+Lever                   Expires November 21, 2019              [Page 12]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -725,7 +725,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 13]
+Lever                   Expires November 21, 2019              [Page 13]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -781,7 +781,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 14]
+Lever                   Expires November 21, 2019              [Page 14]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -803,7 +803,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 8.  IANA Considerations
 
-   This document does not require actions by IANA.
+   This document has no IANA actions.
 
 9.  References
 
@@ -837,7 +837,7 @@ Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
 
 
-Lever                   Expires November 11, 2019              [Page 15]
+Lever                   Expires November 21, 2019              [Page 15]
 
 Internet-Draft        RPC-Over-RDMA Reliable Reply              May 2019
 
@@ -857,7 +857,7 @@ Acknowledgments
    Talpey.  The author also wishes to thank Bill Baker and Greg Marsden
    for their support of this work.
 
-   Special thanks go to Transport Area Director Spencer Dawkins, NFSV4
+   Special thanks go to Transport Area Director Magnus Westerlund, NFSV4
    Working Group Chairs Spencer Shepler and Brian Pawlowski, and NFSV4
    Working Group Secretary Thomas Haynes for their support.
 
@@ -865,8 +865,6 @@ Author's Address
 
    Charles Lever
    Oracle Corporation
-   1015 Granger Avenue
-   Ann Arbor, MI  48104
    United States of America
 
    Email: chuck.lever@oracle.com
@@ -893,4 +891,6 @@ Author's Address
 
 
 
-Lever                   Expires November 11, 2019              [Page 16]
+
+
+Lever                   Expires November 21, 2019              [Page 16]
