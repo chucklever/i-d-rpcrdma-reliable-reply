@@ -27,10 +27,10 @@ Oracle Corporation
 </organization>
 <address>
 <postal>
-<street>1015 Granger Avenue</street>
-<city>Ann Arbor</city>
-<region>MI</region>
-<code>48104</code>
+<street></street>
+<city></city>
+<region></region>
+<code></code>
 <country>United States of America</country>
 </postal>
 <email>chuck.lever@oracle.com</email>
@@ -958,7 +958,7 @@ of a transport protocol that employs it.
  title="IANA Considerations"
  anchor="section:fe47d3e9-d9ba-468b-aa73-838ed4e3aa4f">
 <t>
-This document does not require actions by IANA.
+This document has no IANA actions.
 </t>
 </section>
 
@@ -999,7 +999,7 @@ Bill Baker and Greg Marsden for their support of this work.
 </t>
 <t>
 Special thanks go to
-Transport Area Director Spencer Dawkins,
+Transport Area Director Magnus Westerlund,
 NFSV4 Working Group Chairs Spencer Shepler and Brian Pawlowski,
 and
 NFSV4 Working Group Secretary Thomas Haynes
